@@ -14,6 +14,7 @@
 class QCheckBox;
 class QLabel;
 class QLineEdit;
+class QJsonObject;
 class QPlainTextEdit;
 class QPushButton;
 class QSpinBox;
@@ -47,6 +48,7 @@ private:
   void disconnectDiscord();
   void updateDiscordStatus();
   void updateDiscordEmbedColorButton();
+  void showDiscordPreview(const QJsonObject &payload, bool usedFallback);
   void showTextPreview(const QString &title, const QString &text);
   void setBusy(bool busy, const QString &status = {});
   void prepareTestMessage(
