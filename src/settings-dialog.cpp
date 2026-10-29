@@ -1,14 +1,15 @@
 #include "settings-dialog.hpp"
 
+#include "diagnostics.hpp"
 #include "discord-message.hpp"
 #include "message-template.hpp"
+#include "preview-dialogs.hpp"
 
 #include <obs-module.h>
 
 #include <QCheckBox>
 #include <QClipboard>
 #include <QColorDialog>
-#include <QDateTime>
 #include <QDesktopServices>
 #include <QDialogButtonBox>
 #include <QFrame>
@@ -16,7 +17,6 @@
 #include <QGuiApplication>
 #include <QGroupBox>
 #include <QHBoxLayout>
-#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLabel>
@@ -26,8 +26,6 @@
 #include <QPushButton>
 #include <QScrollArea>
 #include <QSpinBox>
-#include <QStringList>
-#include <QSysInfo>
 #include <QTimer>
 #include <QUrl>
 #include <QVBoxLayout>
@@ -410,10 +408,8 @@ void SettingsDialog::previewDiscordMessage()
                     replaceDiscordRoleTagForPreview(message, originalSettings_.discordRoleName),
                     live, options))
                 .object();
-        const QJsonObject embed =
-            payload.value(QStringLiteral("embeds")).toArray().first().toObject();
         setBusy(false);
-        showDiscordPreview(payload, usedFallback);
+        showDiscordPreviewDialog(this, payload, usedFallback);
       });
 }
 
@@ -448,7 +444,7 @@ void SettingsDialog::previewXMessage()
           preview += QStringLiteral(
               "\n\n---\n치지직 조회에 실패하거나 방송 정보가 없어 예시 값을 사용했습니다.");
         setBusy(false);
-        showTextPreview(QStringLiteral("X 메시지 미리보기"), preview);
+        showTextPreviewDialog(this, QStringLiteral("X 메시지 미리보기"), preview);
       });
 }
 
@@ -481,46 +477,9 @@ void SettingsDialog::chooseDiscordEmbedColor()
 void SettingsDialog::copyDiagnostics()
 {
   const PluginSettings settings = formSettings();
-  const QString recentStatus = status_->text().trimmed();
-  const auto enabledText = [](bool enabled)
-  { return enabled ? QStringLiteral("켜짐") : QStringLiteral("꺼짐"); };
-  const auto visibleText = [](bool visible)
-  { return visible ? QStringLiteral("표시") : QStringLiteral("숨김"); };
-  const QString color = QStringLiteral("#%1")
-                            .arg(settings.discordEmbedColor & 0xffffff, 6, 16, QLatin1Char('0'))
-                            .toUpper();
-  QStringList lines;
-  lines << QStringLiteral("StreamPing 진단 정보")
-        << QStringLiteral("생성 시각: %1").arg(QDateTime::currentDateTime().toString(Qt::ISODate))
-        << QStringLiteral("StreamPing: %1").arg(QString::fromUtf8(STREAMPING_VERSION))
-        << QStringLiteral("OBS: %1").arg(QString::fromUtf8(obs_get_version_string()))
-        << QStringLiteral("Windows: %1").arg(QSysInfo::prettyProductName())
-        << QStringLiteral("치지직 채널: %1")
-               .arg(settings.channelId.isEmpty() ? QStringLiteral("없음")
-                                                 : QStringLiteral("설정됨"))
-        << QStringLiteral("Discord 자동 알림: %1").arg(enabledText(settings.discordEnabled))
-        << QStringLiteral("Discord 연결: %1")
-               .arg(isValidDiscordWebhook(settings.discordWebhook) ? QStringLiteral("연결됨")
-                                                                   : QStringLiteral("연결 안 됨"))
-        << QStringLiteral("Discord 연결 방식: %1")
-               .arg(settings.discordManagedWebhook ? QStringLiteral("간편 연결")
-                                                   : QStringLiteral("수동 또는 없음"))
-        << QStringLiteral("Discord 역할: %1")
-               .arg(settings.discordRoleName.isEmpty() ? QStringLiteral("없음")
-                                                       : settings.discordRoleName)
-        << QStringLiteral("Discord 임베드: %1 / 채널 %2 / 카테고리 %3 / 썸네일 %4")
-               .arg(color, visibleText(settings.discordEmbedShowChannel),
-                    visibleText(settings.discordEmbedShowCategory),
-                    visibleText(settings.discordEmbedShowThumbnail))
-        << QStringLiteral("X 작성 화면: %1").arg(enabledText(settings.xEnabled))
-        << QStringLiteral("LIVE 확인: 첫 지연 %1초 / 간격 %2초 / 최대 %3초")
-               .arg(settings.initialDelaySeconds)
-               .arg(settings.pollingIntervalSeconds)
-               .arg(settings.maximumWaitSeconds)
-        << QStringLiteral("자동 업데이트 확인: %1").arg(enabledText(settings.automaticUpdateChecks))
-        << QStringLiteral("최근 상태: %1")
-               .arg(recentStatus.isEmpty() ? QStringLiteral("없음") : recentStatus);
-  const QString diagnostics = lines.join(QLatin1Char('\n'));
+  const QString diagnostics =
+      buildDiagnostics(settings, status_->text(), QString::fromUtf8(obs_get_version_string()),
+                       QString::fromUtf8(STREAMPING_VERSION));
   QGuiApplication::clipboard()->setText(diagnostics);
   status_->setText(QStringLiteral("민감한 연결 주소를 제외한 진단 정보를 복사했습니다."));
 }
@@ -857,130 +816,6 @@ void SettingsDialog::updateDiscordEmbedColorButton()
   discordEmbedColorButton_->setStyleSheet(
       QStringLiteral("QPushButton { background-color: %1; color: %2; }")
           .arg(hex, textColor.name()));
-}
-
-void SettingsDialog::showDiscordPreview(const QJsonObject &payload, bool usedFallback)
-{
-  QDialog dialog(this);
-  dialog.setWindowTitle(QStringLiteral("Discord 메시지 미리보기"));
-  dialog.resize(620, 520);
-
-  auto *previewContent = new QWidget(&dialog);
-  auto *previewLayout = new QVBoxLayout(previewContent);
-  previewLayout->setContentsMargins(18, 18, 18, 18);
-  previewLayout->setSpacing(10);
-
-  auto *authorLabel = new QLabel(QStringLiteral("StreamPing"), previewContent);
-  authorLabel->setStyleSheet(QStringLiteral("font-weight: 600;"));
-  previewLayout->addWidget(authorLabel);
-
-  auto *messageLabel =
-      new QLabel(payload.value(QStringLiteral("content")).toString(), previewContent);
-  messageLabel->setTextFormat(Qt::PlainText);
-  messageLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
-  messageLabel->setWordWrap(true);
-  previewLayout->addWidget(messageLabel);
-
-  const QJsonObject embed = payload.value(QStringLiteral("embeds")).toArray().first().toObject();
-  auto *embedFrame = new QFrame(previewContent);
-  embedFrame->setObjectName(QStringLiteral("discordEmbed"));
-  embedFrame->setStyleSheet(
-      QStringLiteral("QFrame#discordEmbed { background: #2b2d31; border-radius: 4px; }"
-                     "QFrame#discordEmbed QLabel { color: #dbdee1; }"));
-
-  auto *embedLayout = new QHBoxLayout(embedFrame);
-  embedLayout->setContentsMargins(0, 0, 12, 0);
-  embedLayout->setSpacing(12);
-
-  const int color = embed.value(QStringLiteral("color")).toInt() & 0xffffff;
-  auto *colorStrip = new QWidget(embedFrame);
-  colorStrip->setFixedWidth(5);
-  colorStrip->setStyleSheet(
-      QStringLiteral("background: #%1; border-radius: 2px;").arg(color, 6, 16, QLatin1Char('0')));
-  embedLayout->addWidget(colorStrip);
-
-  auto *embedDetails = new QVBoxLayout;
-  embedDetails->setContentsMargins(0, 12, 0, 12);
-  embedDetails->setSpacing(10);
-
-  auto *titleLabel = new QLabel(embed.value(QStringLiteral("title")).toString(), embedFrame);
-  titleLabel->setWordWrap(true);
-  titleLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
-  titleLabel->setStyleSheet(QStringLiteral("color: #00a8fc; font-weight: 600;"));
-  embedDetails->addWidget(titleLabel);
-
-  const QJsonArray fields = embed.value(QStringLiteral("fields")).toArray();
-  if (!fields.isEmpty())
-  {
-    auto *fieldsLayout = new QHBoxLayout;
-    fieldsLayout->setSpacing(24);
-    for (const QJsonValue &value : fields)
-    {
-      const QJsonObject field = value.toObject();
-      auto *fieldLayout = new QVBoxLayout;
-      fieldLayout->setSpacing(3);
-      auto *nameLabel = new QLabel(field.value(QStringLiteral("name")).toString(), embedFrame);
-      nameLabel->setStyleSheet(QStringLiteral("font-weight: 600;"));
-      auto *valueLabel = new QLabel(field.value(QStringLiteral("value")).toString(), embedFrame);
-      valueLabel->setWordWrap(true);
-      valueLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
-      fieldLayout->addWidget(nameLabel);
-      fieldLayout->addWidget(valueLabel);
-      fieldsLayout->addLayout(fieldLayout, 1);
-    }
-    embedDetails->addLayout(fieldsLayout);
-  }
-  embedLayout->addLayout(embedDetails, 1);
-
-  if (embed.contains(QStringLiteral("image")))
-  {
-    auto *thumbnailLabel = new QLabel(QStringLiteral("LIVE\n썸네일"), embedFrame);
-    thumbnailLabel->setAlignment(Qt::AlignCenter);
-    thumbnailLabel->setFixedSize(96, 72);
-    thumbnailLabel->setStyleSheet(QStringLiteral(
-        "background: #1e1f22; border: 1px solid #3f4147; border-radius: 4px; color: #b5bac1;"));
-    embedLayout->addWidget(thumbnailLabel, 0, Qt::AlignTop);
-  }
-
-  previewLayout->addWidget(embedFrame);
-  if (usedFallback)
-  {
-    auto *fallbackLabel = new QLabel(
-        QStringLiteral("치지직 조회에 실패하거나 방송 정보가 없어 예시 값을 사용했습니다."),
-        previewContent);
-    fallbackLabel->setWordWrap(true);
-    fallbackLabel->setStyleSheet(QStringLiteral("color: #f0b232;"));
-    previewLayout->addWidget(fallbackLabel);
-  }
-  previewLayout->addStretch();
-
-  auto *scrollArea = new QScrollArea(&dialog);
-  scrollArea->setWidgetResizable(true);
-  scrollArea->setFrameShape(QFrame::NoFrame);
-  scrollArea->setWidget(previewContent);
-  auto *buttons = new QDialogButtonBox(QDialogButtonBox::Close, &dialog);
-  buttons->button(QDialogButtonBox::Close)->setText(QStringLiteral("닫기"));
-  auto *layout = new QVBoxLayout(&dialog);
-  layout->addWidget(scrollArea, 1);
-  layout->addWidget(buttons);
-  connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-  dialog.exec();
-}
-
-void SettingsDialog::showTextPreview(const QString &title, const QString &text)
-{
-  QDialog dialog(this);
-  dialog.setWindowTitle(title);
-  dialog.resize(520, 420);
-  auto *editor = new QPlainTextEdit(text, &dialog);
-  editor->setReadOnly(true);
-  auto *buttons = new QDialogButtonBox(QDialogButtonBox::Close, &dialog);
-  buttons->button(QDialogButtonBox::Close)->setText(QStringLiteral("닫기"));
-  auto *layout = new QVBoxLayout(&dialog);
-  layout->addWidget(editor);
-  layout->addWidget(buttons);
-  connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-  dialog.exec();
 }
 
 void SettingsDialog::setBusy(bool busy, const QString &status)

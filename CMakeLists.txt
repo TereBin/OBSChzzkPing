@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.26)
 
-project(streamping VERSION 0.6.6 LANGUAGES CXX)
+project(streamping VERSION 0.7.0 LANGUAGES CXX)
 
 set(STREAMPING_CONNECT_SERVICE_URL "" CACHE STRING
     "Base URL of the StreamPing Discord OAuth service")
@@ -22,6 +22,8 @@ target_sources(
   PRIVATE
     src/chzzk-client.cpp
     src/chzzk-client.hpp
+    src/diagnostics.cpp
+    src/diagnostics.hpp
     src/discord-client.cpp
     src/discord-client.hpp
     src/discord-message.cpp
@@ -35,8 +37,11 @@ target_sources(
     src/notifier.cpp
     src/notifier.hpp
     src/plugin-main.cpp
+    src/preview-dialogs.cpp
+    src/preview-dialogs.hpp
     src/settings-dialog.cpp
     src/settings-dialog.hpp
+    src/settings-defaults.cpp
     src/settings.cpp
     src/settings.hpp
     src/update-checker.cpp
@@ -112,12 +117,15 @@ if(BUILD_TESTING)
   add_executable(
     streamping-tests
     tests/logic-tests.cpp
+    src/diagnostics.cpp
+    src/diagnostics.hpp
     src/discord-message.cpp
     src/discord-message.hpp
     src/http-client.cpp
     src/http-client.hpp
     src/message-template.cpp
     src/message-template.hpp
+    src/settings-defaults.cpp
     src/settings.hpp
     src/update-checker.cpp
     src/update-checker.hpp
@@ -126,7 +134,13 @@ if(BUILD_TESTING)
     src/x-client.hpp
   )
   target_include_directories(streamping-tests PRIVATE src)
-  target_link_libraries(streamping-tests PRIVATE Qt6::Core Qt6::Gui winhttp)
+  target_link_libraries(
+    streamping-tests
+    PRIVATE
+      Qt6::Core
+      Qt6::Gui
+      winhttp
+  )
   target_compile_definitions(streamping-tests PRIVATE STREAMPING_VERSION="${PROJECT_VERSION}")
   set_target_properties(streamping-tests PROPERTIES AUTOMOC ON)
   add_test(NAME streamping-logic COMMAND streamping-tests)

@@ -61,16 +61,6 @@ QString unprotectWebhook(const QString &value)
 }
 } // namespace
 
-QString defaultDiscordMessageTemplate()
-{
-  return QString::fromUtf8("🔴 {channel} 방송 시작!\n\n{title}\n카테고리: {category}\n{url}");
-}
-
-QString defaultXMessageTemplate()
-{
-  return QString::fromUtf8("🔴 {channel} 방송 시작!\n\n{title}\n{category}\n{url}");
-}
-
 QString SettingsStore::filePath() const
 {
   char *path = obs_module_config_path(kSettingsFile);

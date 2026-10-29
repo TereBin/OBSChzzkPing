@@ -1,4 +1,5 @@
 #include "chzzk-client.hpp"
+#include "diagnostics.hpp"
 #include "discord-message.hpp"
 #include "message-template.hpp"
 #include "settings.hpp"
@@ -126,6 +127,28 @@ void buildsXComposeUrls()
         QStringLiteral("방송 시작 https://example.test"));
 }
 
+void buildsSafeDiagnostics()
+{
+  PluginSettings settings;
+  settings.channelId = QStringLiteral("abcdef0123456789abcdef0123456789");
+  settings.discordWebhook =
+      QStringLiteral("https://discord.com/api/webhooks/123456789012345678/secret-token");
+  settings.discordRoleId = QStringLiteral("987654321098765432");
+  settings.discordRoleName = QStringLiteral("방송 알림");
+  settings.discordManagedWebhook = true;
+
+  const QString diagnostics =
+      buildDiagnostics(settings, QStringLiteral("정상"), QStringLiteral("OBS test"),
+                       QStringLiteral("StreamPing test"));
+  check(diagnostics.contains(QStringLiteral("StreamPing: StreamPing test")));
+  check(diagnostics.contains(QStringLiteral("Discord 연결: 연결됨")));
+  check(diagnostics.contains(QStringLiteral("Discord 역할: 방송 알림")));
+  check(!diagnostics.contains(settings.channelId));
+  check(!diagnostics.contains(settings.discordWebhook));
+  check(!diagnostics.contains(settings.discordRoleId));
+  check(!diagnostics.contains(QStringLiteral("secret-token")));
+}
+
 void handlesUpdateVersions()
 {
   check(compareVersions(QStringLiteral("0.4.2"), QStringLiteral("0.5.0")) < 0);
@@ -159,6 +182,7 @@ int main()
   buildsDiscordMessagePayloads();
   rendersMessageVariables();
   buildsXComposeUrls();
+  buildsSafeDiagnostics();
   handlesUpdateVersions();
   return failures == 0 ? 0 : 1;
 }

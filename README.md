@@ -26,7 +26,10 @@ StreamPing은 OBS Studio의 방송 시작 이벤트를 감지한 뒤 치지직 �
 ## 구조
 
 - `src/`: OBS 플러그인과 Windows 네트워크/보안 구현
-- `tests/`: 메시지, 입력 검증, X 작성 URL 테스트
+- `src/preview-dialogs.*`: Discord/X 메시지 미리보기 UI
+- `src/diagnostics.*`: 민감 정보를 제외한 진단 정보 생성
+- `src/settings-defaults.cpp`: Discord/X 기본 메시지 템플릿
+- `tests/`: 메시지, 입력 검증, 진단 정보 보안, X 작성 URL 테스트
 - `worker/`: Discord OAuth2 Webhook 연결용 Cloudflare Worker
 - `scripts/`: Windows 자동 설치기
 - `data/`: OBS 로케일 데이터
