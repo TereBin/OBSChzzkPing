@@ -1,5 +1,12 @@
 # 변경 이력
 
+## 0.8.0
+
+- 프로그램 이름을 StreamPing에서 OBSChzzkPing으로 변경
+- 소스 저장소를 `TereBin/OBSChzzkPing`으로 변경
+- 배포 저장소를 `TereBin/OBSChzzkPing-Release`로 변경
+- 기존 설정과 Discord 역할 선택 호환을 위해 DLL과 `/streamping-role` 식별자는 유지
+
 ## 0.7.0
 
 - 설정 창에서 미리보기 UI와 진단 정보 생성을 별도 모듈로 분리

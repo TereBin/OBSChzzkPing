@@ -59,7 +59,7 @@ HttpResponse performRequest(const QString &method, const QUrl &url, const QByteA
   const std::wstring methodName = method.toStdWString();
 
   InternetHandle session(WinHttpOpen(
-      L"StreamPing/" STREAMPING_WIDEN(STREAMPING_VERSION) L" OBS-Plugin",
+      L"OBSChzzkPing/" STREAMPING_WIDEN(STREAMPING_VERSION) L" OBS-Plugin",
       WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0));
   if (!session.valid())
   {

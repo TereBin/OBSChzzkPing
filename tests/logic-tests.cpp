@@ -139,8 +139,8 @@ void buildsSafeDiagnostics()
 
   const QString diagnostics =
       buildDiagnostics(settings, QStringLiteral("정상"), QStringLiteral("OBS test"),
-                       QStringLiteral("StreamPing test"));
-  check(diagnostics.contains(QStringLiteral("StreamPing: StreamPing test")));
+                       QStringLiteral("OBSChzzkPing test"));
+  check(diagnostics.contains(QStringLiteral("OBSChzzkPing: OBSChzzkPing test")));
   check(diagnostics.contains(QStringLiteral("Discord 연결: 연결됨")));
   check(diagnostics.contains(QStringLiteral("Discord 역할: 방송 알림")));
   check(!diagnostics.contains(settings.channelId));
@@ -162,7 +162,7 @@ void handlesUpdateVersions()
     "urgency": "recommended",
     "title": "새 업데이트",
     "message": "기능이 개선되었습니다.",
-    "downloadUrl": "https://github.com/TereBin/StreamPing-Release/releases/latest"
+    "downloadUrl": "https://github.com/TereBin/OBSChzzkPing-Release/releases/latest"
   })";
   UpdateInfo update;
   check(parseUpdateManifest(manifest, QStringLiteral("v0.5.0"), &update));

@@ -5,4 +5,4 @@
 struct PluginSettings;
 
 QString buildDiagnostics(const PluginSettings &settings, const QString &recentStatus,
-                         const QString &obsVersion, const QString &streamPingVersion);
+                         const QString &obsVersion, const QString &appVersion);

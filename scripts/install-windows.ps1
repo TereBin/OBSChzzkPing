@@ -20,7 +20,7 @@ function Wait-ForInstallerConfirmation {
 
 trap {
     Write-Host
-    Write-Host "StreamPing 설치 실패: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "OBSChzzkPing 설치 실패: $($_.Exception.Message)" -ForegroundColor Red
     Wait-ForInstallerConfirmation
     exit 1
 }
@@ -183,6 +183,6 @@ if ($sourceHash -ne $targetHash) {
     throw '설치 후 DLL 해시가 일치하지 않습니다.'
 }
 
-Write-Host 'StreamPing 업데이트가 완료되었습니다.' -ForegroundColor Green
+Write-Host 'OBSChzzkPing 업데이트가 완료되었습니다.' -ForegroundColor Green
 Write-Host 'OBS Studio를 실행해 주세요.'
 Wait-ForInstallerConfirmation

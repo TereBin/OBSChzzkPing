@@ -7,7 +7,7 @@
 #include <QSysInfo>
 
 QString buildDiagnostics(const PluginSettings &settings, const QString &recentStatus,
-                         const QString &obsVersion, const QString &streamPingVersion)
+                         const QString &obsVersion, const QString &appVersion)
 {
   const auto enabledText = [](bool enabled)
   { return enabled ? QStringLiteral("켜짐") : QStringLiteral("꺼짐"); };
@@ -18,9 +18,9 @@ QString buildDiagnostics(const PluginSettings &settings, const QString &recentSt
                             .toUpper();
 
   QStringList lines;
-  lines << QStringLiteral("StreamPing 진단 정보")
+  lines << QStringLiteral("OBSChzzkPing 진단 정보")
         << QStringLiteral("생성 시각: %1").arg(QDateTime::currentDateTime().toString(Qt::ISODate))
-        << QStringLiteral("StreamPing: %1").arg(streamPingVersion)
+        << QStringLiteral("OBSChzzkPing: %1").arg(appVersion)
         << QStringLiteral("OBS: %1").arg(obsVersion)
         << QStringLiteral("Windows: %1").arg(QSysInfo::prettyProductName())
         << QStringLiteral("치지직 채널: %1")

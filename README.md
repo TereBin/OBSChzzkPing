@@ -1,11 +1,11 @@
-# StreamPing
+# OBSChzzkPing
 
-StreamPing은 OBS Studio의 방송 시작 이벤트를 감지한 뒤 치지직 채널이 실제 LIVE
+OBSChzzkPing은 OBS Studio의 방송 시작 이벤트를 감지한 뒤 치지직 채널이 실제 LIVE
 상태가 되었을 때 Discord 알림을 전송하고 X 작성 화면을 준비하는 Windows용 OBS
 플러그인입니다.
 
-- 배포 패키지: [StreamPing-Release](https://github.com/TereBin/StreamPing-Release/releases/latest)
-- 소스 저장소: [StreamPing](https://github.com/TereBin/StreamPing)
+- 배포 패키지: [OBSChzzkPing-Release](https://github.com/TereBin/OBSChzzkPing-Release/releases/latest)
+- 소스 저장소: [OBSChzzkPing](https://github.com/TereBin/OBSChzzkPing)
 
 ## 기능
 
@@ -68,6 +68,10 @@ Discord 채널 연결은 역할 선택 없이 바로 완료됩니다. 역할 멘
 `{role}` 태그만 선택한 역할 멘션으로 바뀌며, 태그가 없으면 역할을 멘션하지 않습니다.
 `@everyone`과 `@here`는 역할 선택 여부와 관계없이 메시지에 직접 사용할 수 있습니다.
 
+기존 설치의 설정과 Discord 연결을 그대로 유지하기 위해 플러그인 DLL 이름과
+`/streamping-role` 명령은 호환 식별자로 유지합니다. OBS와 설정 화면에는
+`OBSChzzkPing`으로 표시됩니다.
+
 Discord 알림에는 치지직 LIVE 조회에서 확인한 현재 방송 제목, 채널, 카테고리와 가능한
 경우 현재 LIVE 썸네일을 사용한 임베드가 함께 표시됩니다. 치지직 링크의 자동 미리보기는
 사용하지 않으므로 이전 방송 정보가 캐시되어 나타나는 문제를 피합니다. 설정 화면에서
@@ -101,4 +105,4 @@ ctest --test-dir build -C RelWithDebInfo --output-on-failure
 
 ## 라이선스
 
-StreamPing은 [GNU General Public License v2.0](LICENSE)으로 배포됩니다.
+OBSChzzkPing은 [GNU General Public License v2.0](LICENSE)으로 배포됩니다.

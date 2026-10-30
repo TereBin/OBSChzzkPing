@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.26)
 
-project(streamping VERSION 0.7.0 LANGUAGES CXX)
+project(obschzzkping VERSION 0.8.0 LANGUAGES CXX)
 
 set(STREAMPING_CONNECT_SERVICE_URL "" CACHE STRING
-    "Base URL of the StreamPing Discord OAuth service")
+    "Base URL of the OBSChzzkPing Discord OAuth service")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -108,7 +108,7 @@ if(WIN32)
       -LocaleFile "${CMAKE_CURRENT_SOURCE_DIR}/data/locale/ko-KR.ini"
     DEPENDS streamping
     USES_TERMINAL
-    COMMENT "Find OBS Studio and update StreamPing"
+    COMMENT "Find OBS Studio and update OBSChzzkPing"
   )
 endif()
 

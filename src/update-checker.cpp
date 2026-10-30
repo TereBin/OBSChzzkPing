@@ -10,11 +10,11 @@
 namespace
 {
 const QUrl kLatestReleaseUrl(
-    QStringLiteral("https://api.github.com/repos/TereBin/StreamPing-Release/releases/latest"));
+    QStringLiteral("https://api.github.com/repos/TereBin/OBSChzzkPing-Release/releases/latest"));
 const QUrl kUpdateManifestUrl(QStringLiteral(
-    "https://raw.githubusercontent.com/TereBin/StreamPing-Release/main/update.json"));
+    "https://raw.githubusercontent.com/TereBin/OBSChzzkPing-Release/main/update.json"));
 const QString kFallbackDownloadUrl =
-    QStringLiteral("https://github.com/TereBin/StreamPing-Release/releases/latest");
+    QStringLiteral("https://github.com/TereBin/OBSChzzkPing-Release/releases/latest");
 
 struct Version
 {
@@ -52,7 +52,7 @@ bool isAllowedDownloadUrl(const QString &value)
   const QUrl url(value);
   return url.isValid() && url.scheme() == QStringLiteral("https") &&
          url.host() == QStringLiteral("github.com") &&
-         url.path().startsWith(QStringLiteral("/TereBin/StreamPing-Release/releases/"));
+         url.path().startsWith(QStringLiteral("/TereBin/OBSChzzkPing-Release/releases/"));
 }
 
 UpdateUrgency urgencyFromString(const QString &value)
@@ -127,7 +127,7 @@ void UpdateChecker::check(const QString &currentVersion, Callback callback)
   const QString normalizedCurrent = normalizedVersion(currentVersion);
   if (normalizedCurrent.isEmpty())
   {
-    callback({false, {}, QStringLiteral("현재 StreamPing 버전을 확인할 수 없습니다.")});
+    callback({false, {}, QStringLiteral("현재 OBSChzzkPing 버전을 확인할 수 없습니다.")});
     return;
   }
 
@@ -155,7 +155,7 @@ void UpdateChecker::check(const QString &currentVersion, Callback callback)
         fallback.latestVersion = releaseVersion;
         fallback.minimumSupportedVersion = normalizedCurrent;
         fallback.title = release.value(QStringLiteral("name")).toString().trimmed().left(120);
-        fallback.message = QStringLiteral("새 StreamPing 버전이 배포되었습니다.");
+        fallback.message = QStringLiteral("새 OBSChzzkPing 버전이 배포되었습니다.");
         const QString releaseUrl = release.value(QStringLiteral("html_url")).toString().trimmed();
         fallback.downloadUrl = isAllowedDownloadUrl(releaseUrl) ? releaseUrl : kFallbackDownloadUrl;
 

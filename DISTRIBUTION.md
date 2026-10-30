@@ -1,4 +1,4 @@
-# StreamPing 0.7.0
+# OBSChzzkPing 0.8.0
 
 OBS Studio에서 치지직 LIVE 상태를 확인해 Discord 알림을 보내고 X 작성 화면을
 준비하는 Windows x64 플러그인입니다.
@@ -9,9 +9,9 @@ OBS Studio에서 치지직 LIVE 상태를 확인해 Discord 알림을 보내고 
 2. ZIP 파일을 원하는 폴더에 압축 해제합니다.
 3. `install.cmd`를 실행합니다.
 4. 관리자 권한 요청이 표시되면 승인합니다.
-5. OBS를 실행하고 `도구 > StreamPing 설정`을 엽니다.
+5. OBS를 실행하고 `도구 > OBSChzzkPing 설정`을 엽니다.
 
-StreamPing은 기본적으로 OBS 실행 후 하루에 한 번 새 버전을 확인합니다. 새 버전이 있으면
+OBSChzzkPing은 기본적으로 OBS 실행 후 하루에 한 번 새 버전을 확인합니다. 새 버전이 있으면
 중요도에 따라 선택, 권장 또는 필수 업데이트 알림을 표시합니다. 설정 화면의 **업데이트 >
 지금 확인**에서 직접 확인하거나 자동 확인을 끌 수 있습니다. 업데이트는 자동으로 설치되지
 않으며 다운로드 페이지를 연 뒤 OBS를 종료하고 설치해야 합니다.
@@ -52,10 +52,10 @@ OBS를 종료한 뒤 다음 파일을 삭제합니다.
 - `obs-plugins/64bit/streamping.dll.bak`
 - `data/obs-plugins/streamping/`
 
-Discord 연결을 먼저 해제하면 StreamPing이 생성한 Webhook도 함께 삭제됩니다.
+Discord 연결을 먼저 해제하면 OBSChzzkPing이 생성한 Webhook도 함께 삭제됩니다.
 
-소스 코드와 이슈: https://github.com/TereBin/StreamPing
+소스 코드와 이슈: https://github.com/TereBin/OBSChzzkPing
 
 ## 라이선스
 
-StreamPing은 동봉된 `LICENSE`의 GNU General Public License v2.0으로 배포됩니다.
+OBSChzzkPing은 동봉된 `LICENSE`의 GNU General Public License v2.0으로 배포됩니다.

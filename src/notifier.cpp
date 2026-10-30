@@ -42,11 +42,11 @@ void StreamNotifier::onStreamingStarted()
       settings_.discordEnabled && isValidDiscordWebhook(settings_.discordWebhook);
   if (settings_.channelId.isEmpty() || (!discordConfigured && !settings_.xEnabled))
   {
-    blog(LOG_WARNING, "[StreamPing] Settings are incomplete; notification was skipped");
+    blog(LOG_WARNING, "[OBSChzzkPing] Settings are incomplete; notification was skipped");
     return;
   }
 
-  blog(LOG_INFO, "[StreamPing] Streaming started; waiting for CHZZK live status");
+  blog(LOG_INFO, "[OBSChzzkPing] Streaming started; waiting for CHZZK live status");
   pollTimer_.start(settings_.initialDelaySeconds * 1000);
 }
 
@@ -55,7 +55,7 @@ void StreamNotifier::onStreamingStopped()
   ++runId_;
   pollTimer_.stop();
   notificationInFlight_ = false;
-  blog(LOG_INFO, "[StreamPing] Streaming stopped; pending notification cancelled");
+  blog(LOG_INFO, "[OBSChzzkPing] Streaming stopped; pending notification cancelled");
 }
 
 void StreamNotifier::showSettings()
@@ -89,12 +89,12 @@ void StreamNotifier::checkForUpdates()
             requiredUpdate ? QString() : QDateTime::currentDateTimeUtc().toString(Qt::ISODate);
         QString saveError;
         if (!store_.save(settings, &saveError))
-          blog(LOG_WARNING, "[StreamPing] Failed to save update check time: %s",
+          blog(LOG_WARNING, "[OBSChzzkPing] Failed to save update check time: %s",
                logText(saveError).constData());
 
         if (!result.error.isEmpty())
         {
-          blog(LOG_WARNING, "[StreamPing] Update check failed: %s",
+          blog(LOG_WARNING, "[OBSChzzkPing] Update check failed: %s",
                logText(result.error).constData());
           return;
         }
@@ -112,10 +112,10 @@ void StreamNotifier::showUpdateNotice(const UpdateInfo &update)
   auto *messageBox = new QMessageBox(mainWindow_);
   messageBox->setAttribute(Qt::WA_DeleteOnClose);
   messageBox->setWindowTitle(update.urgency == UpdateUrgency::Required
-                                 ? QStringLiteral("StreamPing 필수 업데이트")
+                                 ? QStringLiteral("OBSChzzkPing 필수 업데이트")
                                  : (update.urgency == UpdateUrgency::Recommended
-                                        ? QStringLiteral("StreamPing 권장 업데이트")
-                                        : QStringLiteral("StreamPing 업데이트")));
+                                        ? QStringLiteral("OBSChzzkPing 권장 업데이트")
+                                        : QStringLiteral("OBSChzzkPing 업데이트")));
   messageBox->setIcon(update.urgency == UpdateUrgency::Required
                           ? QMessageBox::Critical
                           : (update.urgency == UpdateUrgency::Recommended
@@ -123,7 +123,7 @@ void StreamNotifier::showUpdateNotice(const UpdateInfo &update)
                                  : QMessageBox::Information));
   messageBox->setText(
       update.title.isEmpty()
-          ? QStringLiteral("StreamPing %1 버전이 배포되었습니다.").arg(update.latestVersion)
+          ? QStringLiteral("OBSChzzkPing %1 버전이 배포되었습니다.").arg(update.latestVersion)
           : update.title);
   messageBox->setInformativeText(
       QStringLiteral("현재 버전: %1\n최신 버전: %2\n\n%3")
@@ -150,7 +150,7 @@ void StreamNotifier::showUpdateNotice(const UpdateInfo &update)
               settings.skippedUpdateVersion = update.latestVersion;
               QString error;
               if (!store_.save(settings, &error))
-                blog(LOG_WARNING, "[StreamPing] Failed to save skipped update: %s",
+                blog(LOG_WARNING, "[OBSChzzkPing] Failed to save skipped update: %s",
                      logText(error).constData());
             }
           });
@@ -172,7 +172,7 @@ void StreamNotifier::poll()
 
         if (!error.isEmpty())
         {
-          blog(LOG_WARNING, "[StreamPing] %s", logText(error).constData());
+          blog(LOG_WARNING, "[OBSChzzkPing] %s", logText(error).constData());
           scheduleNextPoll();
           return;
         }
@@ -204,12 +204,12 @@ void StreamNotifier::poll()
             settings_.lastXPromptedLiveKey = liveKey;
             QString saveError;
             if (!store_.save(settings_, &saveError))
-              blog(LOG_WARNING, "[StreamPing] Failed to save X duplicate guard: %s",
+              blog(LOG_WARNING, "[OBSChzzkPing] Failed to save X duplicate guard: %s",
                    logText(saveError).constData());
           }
           else
           {
-            blog(LOG_WARNING, "[StreamPing] Failed to open X compose window");
+            blog(LOG_WARNING, "[OBSChzzkPing] Failed to open X compose window");
           }
         }
 
@@ -246,7 +246,7 @@ void StreamNotifier::scheduleNextPoll()
 void StreamNotifier::stopRun(const QString &reason)
 {
   pollTimer_.stop();
-  blog(LOG_INFO, "[StreamPing] %s", logText(reason).constData());
+  blog(LOG_INFO, "[OBSChzzkPing] %s", logText(reason).constData());
 }
 
 void StreamNotifier::sendDiscordNotification(const LiveInfo &live)
@@ -269,7 +269,7 @@ void StreamNotifier::sendDiscordNotification(const LiveInfo &live)
                   notificationInFlight_ = false;
                   if (!error.isEmpty())
                   {
-                    blog(LOG_WARNING, "[StreamPing] %s", logText(error).constData());
+                    blog(LOG_WARNING, "[OBSChzzkPing] %s", logText(error).constData());
                     if (sendAttempts_ >= kMaximumSendAttempts)
                     {
                       stopRun(QStringLiteral("Discord 전송을 3회 실패했습니다."));
@@ -284,7 +284,7 @@ void StreamNotifier::sendDiscordNotification(const LiveInfo &live)
                   settings_.lastDiscordNotifiedLiveKey = live.liveKey;
                   QString saveError;
                   if (!store_.save(settings_, &saveError))
-                    blog(LOG_WARNING, "[StreamPing] Failed to save duplicate guard: %s",
+                    blog(LOG_WARNING, "[OBSChzzkPing] Failed to save duplicate guard: %s",
                          logText(saveError).constData());
                   stopRun(QStringLiteral("Discord 방송 알림을 전송했습니다."));
                 });

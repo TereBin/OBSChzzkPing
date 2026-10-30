@@ -35,7 +35,7 @@
 namespace
 {
 constexpr int kMessageEditorHeight = 140;
-const QUrl kIssuesUrl(QStringLiteral("https://github.com/TereBin/StreamPing/issues"));
+const QUrl kIssuesUrl(QStringLiteral("https://github.com/TereBin/OBSChzzkPing/issues"));
 const QUrl kDiscordSupportUrl(QStringLiteral("https://discordapp.com/users/537256771501424640"));
 } // namespace
 
@@ -43,7 +43,7 @@ SettingsDialog::SettingsDialog(const SettingsStore &store, QWidget *parent)
     : QDialog(parent), store_(store), originalSettings_(store_.load()), chzzk_(this),
       discord_(this), discordConnection_(this), updateChecker_(this)
 {
-  setWindowTitle(QStringLiteral("StreamPing 설정"));
+  setWindowTitle(QStringLiteral("OBSChzzkPing 설정"));
   resize(760, 720);
   setMinimumSize(560, 480);
 
@@ -486,7 +486,7 @@ void SettingsDialog::copyDiagnostics()
 
 void SettingsDialog::checkUpdates()
 {
-  setBusy(true, QStringLiteral("최신 StreamPing 버전을 확인하는 중..."));
+  setBusy(true, QStringLiteral("최신 OBSChzzkPing 버전을 확인하는 중..."));
   updateChecker_.check(
       QString::fromUtf8(STREAMPING_VERSION),
       [this](const UpdateCheckResult &result)
@@ -505,17 +505,17 @@ void SettingsDialog::checkUpdates()
 
         QMessageBox messageBox(this);
         messageBox.setWindowTitle(result.update.urgency == UpdateUrgency::Required
-                                      ? QStringLiteral("StreamPing 필수 업데이트")
+                                      ? QStringLiteral("OBSChzzkPing 필수 업데이트")
                                       : (result.update.urgency == UpdateUrgency::Recommended
-                                             ? QStringLiteral("StreamPing 권장 업데이트")
-                                             : QStringLiteral("StreamPing 업데이트")));
+                                             ? QStringLiteral("OBSChzzkPing 권장 업데이트")
+                                             : QStringLiteral("OBSChzzkPing 업데이트")));
         messageBox.setIcon(result.update.urgency == UpdateUrgency::Required
                                ? QMessageBox::Critical
                                : (result.update.urgency == UpdateUrgency::Recommended
                                       ? QMessageBox::Warning
                                       : QMessageBox::Information));
         messageBox.setText(result.update.title.isEmpty()
-                               ? QStringLiteral("StreamPing %1 버전이 배포되었습니다.")
+                               ? QStringLiteral("OBSChzzkPing %1 버전이 배포되었습니다.")
                                      .arg(result.update.latestVersion)
                                : result.update.title);
         messageBox.setInformativeText(QStringLiteral("현재 버전: %1\n최신 버전: %2\n\n%3")

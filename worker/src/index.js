@@ -5,7 +5,7 @@ const SESSION_ID_PATTERN = /^[A-Za-z0-9_-]{24}$/;
 const TOKEN_PATTERN = /^[A-Za-z0-9_-]{43}$/;
 const SNOWFLAKE_PATTERN = /^[0-9]{17,20}$/;
 const ROLE_COMMAND_NAME = "streamping-role";
-const ROLE_COMMAND_CACHE_KEY = "discord-command:streamping-role:v1";
+const ROLE_COMMAND_CACHE_KEY = "discord-command:streamping-role:v2";
 const MANAGE_WEBHOOKS_PERMISSION = 1n << 29n;
 
 function responseHeaders(extra = {}) {
@@ -134,7 +134,7 @@ async function ensureRoleCommand(env) {
       },
       body: JSON.stringify({
         name: ROLE_COMMAND_NAME,
-        description: "StreamPing 알림에서 멘션할 역할을 선택합니다.",
+        description: "OBSChzzkPing 알림에서 멘션할 역할을 선택합니다.",
         type: 1,
         default_member_permissions: MANAGE_WEBHOOKS_PERMISSION.toString(),
         options: [
@@ -202,7 +202,7 @@ async function selectRole(request, env) {
   if (interaction.type === 1)
     return json({ type: 1 });
   if (interaction.type !== 2 || interaction.data?.name !== ROLE_COMMAND_NAME)
-    return interactionMessage("지원하지 않는 StreamPing 명령입니다.");
+    return interactionMessage("지원하지 않는 OBSChzzkPing 명령입니다.");
 
   let permissions = 0n;
   try {
@@ -224,12 +224,12 @@ async function selectRole(request, env) {
   const sessionId = await env.SESSIONS.get(roleSessionKey);
   const rawSession = sessionId ? await env.SESSIONS.get(`session:${sessionId}`) : null;
   if (!rawSession)
-    return interactionMessage("대기 중인 StreamPing 연결이 없습니다. OBS에서 다시 연결해 주세요.");
+    return interactionMessage("대기 중인 OBSChzzkPing 연결이 없습니다. OBS에서 다시 연결해 주세요.");
 
   const session = JSON.parse(rawSession);
   if (session.status !== "awaiting_role" || session.guildId !== guildId ||
       session.channelId !== channelId)
-    return interactionMessage("이 채널의 StreamPing 연결 요청이 만료되었습니다.");
+    return interactionMessage("이 채널의 OBSChzzkPing 연결 요청이 만료되었습니다.");
 
   const role = interaction.data?.resolved?.roles?.[roleId];
   session.status = "complete";
@@ -319,7 +319,7 @@ async function createRoleSession(request, env) {
   try {
     detailsResponse = await fetch(
       `${DISCORD_API}/webhooks/${webhook.id}/${webhook.token}`,
-      { headers: { "user-agent": "StreamPing/0.4" } },
+      { headers: { "user-agent": "OBSChzzkPing/0.8" } },
     );
   } catch {
     return json({ error: "Discord에서 연결 정보를 확인할 수 없습니다." }, 502);
@@ -356,7 +356,7 @@ async function completeAuthorization(request, env) {
   const code = url.searchParams.get("code") || "";
   const oauthError = url.searchParams.get("error");
   if (!TOKEN_PATTERN.test(state) || code.length > 2048)
-    return text("This StreamPing connection request is invalid.", 400);
+    return text("This OBSChzzkPing connection request is invalid.", 400);
 
   const rateLimitResponse = await enforceRateLimits([
     [env.SESSION_API_CLIENT, `callback:${clientKey(request)}`],
@@ -366,14 +366,14 @@ async function completeAuthorization(request, env) {
 
   const sessionId = state ? await env.SESSIONS.get(`state:${state}`) : null;
   if (!sessionId)
-    return text("This StreamPing connection request has expired.", 400);
+    return text("This OBSChzzkPing connection request has expired.", 400);
 
   const rawSession = await env.SESSIONS.get(`session:${sessionId}`);
   if (!rawSession)
-    return text("This StreamPing connection request has expired.", 400);
+    return text("This OBSChzzkPing connection request has expired.", 400);
   const session = JSON.parse(rawSession);
   if (session.status !== "pending" || session.state !== state)
-    return text("This StreamPing connection request has expired.", 400);
+    return text("This OBSChzzkPing connection request has expired.", 400);
 
   if (oauthError || !code) {
     session.status = "failed";

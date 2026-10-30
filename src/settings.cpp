@@ -25,7 +25,7 @@ QString protectWebhook(const QString &value, QString *error)
   DATA_BLOB input{static_cast<DWORD>(plain.size()),
                   reinterpret_cast<BYTE *>(const_cast<char *>(plain.constData()))};
   DATA_BLOB output{};
-  if (!CryptProtectData(&input, L"StreamPing Discord webhook", nullptr, nullptr, nullptr,
+  if (!CryptProtectData(&input, L"OBSChzzkPing Discord webhook", nullptr, nullptr, nullptr,
                         CRYPTPROTECT_UI_FORBIDDEN, &output))
   {
     if (error)

@@ -44,7 +44,7 @@ void showDiscordPreviewDialog(QWidget *parent, const QJsonObject &payload, bool 
   previewLayout->setContentsMargins(18, 18, 18, 18);
   previewLayout->setSpacing(10);
 
-  auto *authorLabel = new QLabel(QStringLiteral("StreamPing"), previewContent);
+  auto *authorLabel = new QLabel(QStringLiteral("OBSChzzkPing"), previewContent);
   authorLabel->setStyleSheet(QStringLiteral("font-weight: 600;"));
   previewLayout->addWidget(authorLabel);
   previewLayout->addWidget(

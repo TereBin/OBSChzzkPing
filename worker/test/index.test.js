@@ -38,7 +38,7 @@ function limiter(success = true) {
 
 function environment(overrides = {}) {
   const sessions = overrides.SESSIONS || new MemoryKv();
-  sessions.entries.set("discord-command:streamping-role:v1", "ready");
+  sessions.entries.set("discord-command:streamping-role:v2", "ready");
   return {
     DISCORD_CLIENT_ID: "1234567890",
     DISCORD_CLIENT_SECRET: "test-only-secret",
@@ -127,7 +127,7 @@ test("session creation stores only hashed poll credentials", async () => {
 test("session creation registers the role command when the cache is empty", { concurrency: false },
   async () => {
     const env = environment({ SESSIONS: new MemoryKv() });
-    env.SESSIONS.entries.delete("discord-command:streamping-role:v1");
+    env.SESSIONS.entries.delete("discord-command:streamping-role:v2");
     const requests = [];
     const originalFetch = globalThis.fetch;
     globalThis.fetch = async (url, options) => {
@@ -152,7 +152,7 @@ test("session creation registers the role command when the cache is empty", { co
     assert.equal(command.name, "streamping-role");
     assert.equal(command.options[0].type, 8);
     assert.equal(command.default_member_permissions, "536870912");
-    assert.equal(env.SESSIONS.entries.get("discord-command:streamping-role:v1"), "ready");
+    assert.equal(env.SESSIONS.entries.get("discord-command:streamping-role:v2"), "ready");
   });
 
 test("invalid poll tokens are rejected without a KV read", async () => {

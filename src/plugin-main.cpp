@@ -38,19 +38,20 @@ MODULE_EXPORT const char *obs_module_description(void)
   return "Sends a Discord notification after a CHZZK stream becomes live.";
 }
 
-MODULE_EXPORT const char *obs_module_name(void) { return "StreamPing"; }
+MODULE_EXPORT const char *obs_module_name(void) { return "OBSChzzkPing"; }
 
 bool obs_module_load(void)
 {
   auto *mainWindow = static_cast<QMainWindow *>(obs_frontend_get_main_window());
   g_notifier = new StreamNotifier(mainWindow);
 
-  g_settingsAction = static_cast<QAction *>(obs_frontend_add_tools_menu_qaction("StreamPing 설정"));
+  g_settingsAction =
+      static_cast<QAction *>(obs_frontend_add_tools_menu_qaction("OBSChzzkPing 설정"));
   QObject::connect(g_settingsAction, &QAction::triggered, g_notifier,
                    &StreamNotifier::showSettings);
   obs_frontend_add_event_callback(onFrontendEvent, nullptr);
 
-  blog(LOG_INFO, "[StreamPing] Plugin loaded (version %s)", STREAMPING_VERSION);
+  blog(LOG_INFO, "[OBSChzzkPing] Plugin loaded (version %s)", STREAMPING_VERSION);
   return true;
 }
 
@@ -61,5 +62,5 @@ void obs_module_unload(void)
   delete g_notifier;
   g_settingsAction = nullptr;
   g_notifier = nullptr;
-  blog(LOG_INFO, "[StreamPing] Plugin unloaded");
+  blog(LOG_INFO, "[OBSChzzkPing] Plugin unloaded");
 }
