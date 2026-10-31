@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.26)
 
-project(obschzzkping VERSION 0.8.1 LANGUAGES CXX)
+project(obschzzkping VERSION 0.8.2 LANGUAGES CXX)
 
 set(STREAMPING_CONNECT_SERVICE_URL "" CACHE STRING
     "Base URL of the OBSChzzkPing Discord OAuth service")

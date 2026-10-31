@@ -31,7 +31,8 @@ OBSChzzkPing은 OBS Studio의 방송 시작 이벤트를 감지한 뒤 치지직
 - `src/settings-defaults.cpp`: Discord/X 기본 메시지 템플릿
 - `tests/`: 메시지, 입력 검증, 진단 정보 보안, X 작성 URL 테스트
 - `worker/`: Discord OAuth2 Webhook 연결용 Cloudflare Worker
-- `scripts/`: Windows 자동 설치기
+- `installer/`: Inno Setup 기반 Windows 설치 관리자
+- `scripts/`: ZIP 배포용 Windows 설치 스크립트
 - `data/`: OBS 로케일 데이터
 
 치지직 조회는 특정 채널을 직접 조회하기 위해 웹 서비스의 공개 `live-detail`
@@ -54,6 +55,17 @@ cmake -S . -B build -A x64 `
 cmake --build build --config RelWithDebInfo
 cmake --install build --config RelWithDebInfo --prefix dist
 ```
+
+Inno Setup 6이 설치되어 있으면 일반 사용자용 설치 EXE를 만들 수 있습니다.
+
+```powershell
+& "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer\OBSChzzkPing.iss
+```
+
+사용자 계정에 Inno Setup을 설치했다면 `ISCC.exe` 경로를 해당 설치 위치로 바꿉니다.
+생성된 `artifacts\OBSChzzkPing-Setup.exe`는 OBS 경로 선택, 실행 중인 OBS 확인과
+Windows 설치된 앱을 통한 제거를 지원합니다. ZIP 패키지는 포터블 OBS와 수동 설치용으로
+계속 제공합니다.
 
 Discord 자동 연결 서비스가 없는 빌드는 수동 Webhook 입력을 계속 사용할 수 있습니다.
 Worker 배포 방법은 [worker/README.md](worker/README.md)를 참고하세요.

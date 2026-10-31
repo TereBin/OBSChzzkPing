@@ -1,5 +1,12 @@
 # 변경 이력
 
+## 0.8.2
+
+- Windows용 `OBSChzzkPing-Setup.exe` 설치 관리자 추가
+- 설치 관리자에서 OBS 경로 자동 탐색과 직접 선택, 실행 중인 OBS 감지 지원
+- Windows 설치된 앱에서 OBSChzzkPing 제거 지원
+- 포터블 OBS와 수동 설치 사용자를 위한 ZIP 배포는 계속 제공
+
 ## 0.8.1
 
 - OBS 33 종료 중 OBS가 먼저 파괴한 Qt 객체를 플러그인이 다시 삭제해 충돌하던 문제 수정
