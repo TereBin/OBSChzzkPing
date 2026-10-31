@@ -5,17 +5,32 @@
 
 #include <QAction>
 #include <QMainWindow>
+#include <QPointer>
 
 OBS_DECLARE_MODULE()
 OBS_MODULE_USE_DEFAULT_LOCALE("streamping", "ko-KR")
 
 namespace
 {
-StreamNotifier *g_notifier = nullptr;
-QAction *g_settingsAction = nullptr;
+QPointer<StreamNotifier> g_notifier;
+QPointer<QAction> g_settingsAction;
+
+void cleanupQtObjects()
+{
+  delete g_settingsAction.data();
+  delete g_notifier.data();
+  g_settingsAction.clear();
+  g_notifier.clear();
+}
 
 void onFrontendEvent(enum obs_frontend_event event, void *)
 {
+  if (event == OBS_FRONTEND_EVENT_EXIT)
+  {
+    cleanupQtObjects();
+    return;
+  }
+
   if (!g_notifier)
     return;
 
@@ -58,9 +73,9 @@ bool obs_module_load(void)
 void obs_module_unload(void)
 {
   obs_frontend_remove_event_callback(onFrontendEvent, nullptr);
-  delete g_settingsAction;
-  delete g_notifier;
-  g_settingsAction = nullptr;
-  g_notifier = nullptr;
+
+  // Normally cleaned during OBS_FRONTEND_EVENT_EXIT while the Qt parents are
+  // still alive. QPointer also makes this safe for late or direct unloading.
+  cleanupQtObjects();
   blog(LOG_INFO, "[OBSChzzkPing] Plugin unloaded");
 }
