@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.26)
 
-project(obschzzkping VERSION 0.8.2 LANGUAGES CXX)
+project(obschzzkping VERSION 0.8.3 LANGUAGES CXX)
 
 set(STREAMPING_CONNECT_SERVICE_URL "" CACHE STRING
     "Base URL of the OBSChzzkPing Discord OAuth service")
@@ -16,6 +16,12 @@ find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
 qt_standard_project_setup()
 
 add_library(streamping MODULE)
+
+if(WIN32)
+  enable_language(RC)
+  configure_file(src/version.rc.in generated/version.rc @ONLY)
+  target_sources(streamping PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/generated/version.rc")
+endif()
 
 target_sources(
   streamping

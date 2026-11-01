@@ -29,6 +29,7 @@ OBSChzzkPing은 OBS Studio의 방송 시작 이벤트를 감지한 뒤 치지직
 - `src/preview-dialogs.*`: Discord/X 메시지 미리보기 UI
 - `src/diagnostics.*`: 민감 정보를 제외한 진단 정보 생성
 - `src/settings-defaults.cpp`: Discord/X 기본 메시지 템플릿
+- `src/version.rc.in`: CMake 프로젝트 버전으로 생성하는 Windows DLL 버전 정보
 - `tests/`: 메시지, 입력 검증, 진단 정보 보안, X 작성 URL 테스트
 - `worker/`: Discord OAuth2 Webhook 연결용 Cloudflare Worker
 - `installer/`: Inno Setup 기반 Windows 설치 관리자

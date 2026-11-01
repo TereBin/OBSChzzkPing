@@ -1,5 +1,11 @@
 # 변경 이력
 
+## 0.8.3
+
+- `streamping.dll`에 Windows `FileVersion`과 `ProductVersion` 버전 정보 추가
+- 통합 설치 프로그램과 Windows 파일 속성에서 설치된 OBSChzzkPing 버전 확인 지원
+- 제품 이름, 파일 설명, 저작권 등 DLL 메타데이터 추가
+
 ## 0.8.2
 
 - Windows용 `OBSChzzkPing-Setup.exe` 설치 관리자 추가
