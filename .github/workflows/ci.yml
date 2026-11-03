@@ -39,6 +39,15 @@ jobs:
         shell: pwsh
         run: cmake --build --preset windows-x64 -- /m:1 /p:CL_MPCount=1
 
+      - name: Add test runtime libraries to PATH
+        shell: pwsh
+        run: |
+          $paths = @((Resolve-Path '.deps/bin/64bit').Path)
+          $paths += Get-ChildItem .deps -Directory -Filter 'obs-deps-*-x64' |
+            ForEach-Object { Join-Path $_.FullName 'bin' } |
+            Where-Object { Test-Path $_ }
+          $paths | Sort-Object -Unique | ForEach-Object { $_ >> $env:GITHUB_PATH }
+
       - name: Test
         shell: pwsh
         run: ctest --preset windows-x64
