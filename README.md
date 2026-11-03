@@ -71,6 +71,37 @@ Windows 설치된 앱을 통한 제거를 지원합니다. ZIP 패키지는 포�
 Discord 자동 연결 서비스가 없는 빌드는 수동 Webhook 입력을 계속 사용할 수 있습니다.
 Worker 배포 방법은 [worker/README.md](worker/README.md)를 참고하세요.
 
+### 자동 빌드와 릴리스
+
+프로젝트 버전의 기준은 `buildspec.json`입니다. 새 버전을 준비할 때 직접 여러 파일을
+수정하지 말고 다음 명령을 사용합니다.
+
+```powershell
+.\scripts\set-version.ps1 -Version 0.9.0
+```
+
+이 명령은 설치기와 배포 문서의 버전을 맞추고 `CHANGELOG.md`에 새 섹션을 준비합니다.
+변경 사항을 작성한 뒤 `verify-version.ps1`로 버전 일치를 확인할 수 있습니다.
+
+GitHub Actions의 **Windows CI**는 `main` 푸시와 Pull Request에서 다음 작업을 수행합니다.
+
+- 고정된 OBS 31.1.1 및 Qt/OBS 의존성 다운로드
+- Windows x64 빌드와 자동 테스트
+- DLL, ZIP, Inno Setup 설치 관리자 생성
+- SHA-256 체크섬 생성 및 CI 산출물 업로드
+
+`v0.9.0`처럼 `buildspec.json` 버전과 일치하는 태그를 푸시하면 CI 통과 후
+`TereBin/OBSChzzkPing-Release`의 현재 배포 파일, README와 `update.json`을 갱신하고 같은
+태그의 GitHub Release를 생성합니다. 소스 저장소의 Actions secret에 배포 저장소 쓰기
+권한이 있는 fine-grained Personal Access Token을 `RELEASE_REPO_TOKEN` 이름으로 등록해야
+합니다. 토큰에는 `TereBin/OBSChzzkPing-Release` 저장소의 **Contents: Read and write**
+권한만 부여하는 것을 권장합니다.
+
+```powershell
+git tag v0.9.0
+git push origin v0.9.0
+```
+
 업데이트 확인은 GitHub 배포 저장소의 최신 Release와 `update.json`을 함께 사용합니다.
 `minimumSupportedVersion`보다 낮은 버전에는 필수 업데이트를 표시하며, 그 외 업데이트는
 배포자가 지정한 `required`, `recommended`, `optional` 단계에 따라 안내합니다. 원격 정보만으로

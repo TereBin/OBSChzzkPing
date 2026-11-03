@@ -1,5 +1,6 @@
 /build/
 /build_*/
+/release-output/
 /dist/
 /artifacts/
 /release-repo/

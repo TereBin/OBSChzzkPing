@@ -1,6 +1,22 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.28)
 
-project(obschzzkping VERSION 0.8.3 LANGUAGES CXX)
+option(OBSCHZZKPING_BOOTSTRAP_DEPS
+       "Download the pinned OBS and Qt build dependencies" OFF)
+
+if(OBSCHZZKPING_BOOTSTRAP_DEPS)
+  include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/common/bootstrap.cmake" NO_POLICY_SCOPE)
+else()
+  file(READ "${CMAKE_CURRENT_SOURCE_DIR}/buildspec.json" buildspec)
+  string(JSON _name GET "${buildspec}" name)
+  string(JSON _version GET "${buildspec}" version)
+endif()
+
+project(${_name} VERSION ${_version} LANGUAGES CXX)
+
+if(OBSCHZZKPING_BOOTSTRAP_DEPS)
+  include(defaults)
+  include(compilerconfig)
+endif()
 
 set(STREAMPING_CONNECT_SERVICE_URL "" CACHE STRING
     "Base URL of the OBSChzzkPing Discord OAuth service")

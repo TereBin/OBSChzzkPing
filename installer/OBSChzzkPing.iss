@@ -1,6 +1,9 @@
 #ifndef MyAppVersion
   #define MyAppVersion "0.8.3"
 #endif
+#ifndef MyBuildDir
+  #define MyBuildDir "..\build\RelWithDebInfo"
+#endif
 
 #define MyAppName "OBSChzzkPing"
 #define MyPublisher "TereBin"
@@ -39,7 +42,7 @@ VersionInfoProductVersion={#MyAppVersion}
 Name: "korean"; MessagesFile: "compiler:Languages\Korean.isl"
 
 [Files]
-Source: "..\build\RelWithDebInfo\streamping.dll"; DestDir: "{code:GetObsPluginDir}"; Flags: ignoreversion; BeforeInstall: BackupExistingPlugin
+Source: "{#MyBuildDir}\streamping.dll"; DestDir: "{code:GetObsPluginDir}"; Flags: ignoreversion; BeforeInstall: BackupExistingPlugin
 Source: "..\data\locale\ko-KR.ini"; DestDir: "{code:GetObsLocaleDir}"; Flags: ignoreversion
 
 [Icons]
